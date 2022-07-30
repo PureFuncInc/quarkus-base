@@ -1,7 +1,9 @@
 package net.purefunc.user.domain.service
 
 import arrow.core.Either
-import net.purefunc.kotlin.ext.CustomErr
+import net.purefunc.common.KaqAppErr
+import net.purefunc.common.QuarkusAppErr
+import net.purefunc.kotlin.ext.AppErr
 import net.purefunc.user.domain.UserDO
 import net.purefunc.user.domain.repository.UserRepository
 import net.purefunc.user.interfaces.facade.req.UserLoginReqDTO
@@ -14,7 +16,7 @@ class UserDomainService(
 
     suspend fun loginOrSignup(
         userLoginReqDTO: UserLoginReqDTO
-    ): Either<CustomErr, UserDO> =
+    ): Either<QuarkusAppErr, UserDO> =
         userRepository
             .queryByEmail(userLoginReqDTO.email)
             .fold(
@@ -24,5 +26,5 @@ class UserDomainService(
 
     suspend fun queryLoginRecordsByEmail(
         email: String
-    ): Either<CustomErr, UserDO> = userRepository.queryByEmail(email)
+    ): Either<QuarkusAppErr, UserDO> = userRepository.queryByEmail(email)
 }

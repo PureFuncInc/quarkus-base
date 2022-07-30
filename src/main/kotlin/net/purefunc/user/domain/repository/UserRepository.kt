@@ -5,7 +5,8 @@ import io.quarkus.hibernate.reactive.panache.Panache
 import io.smallrye.mutiny.Uni
 import io.smallrye.mutiny.coroutines.awaitSuspending
 import net.purefunc.common.KaqAppErr
-import net.purefunc.kotlin.ext.CustomErr
+import net.purefunc.common.QuarkusAppErr
+import net.purefunc.kotlin.ext.AppErr
 import net.purefunc.kotlin.ext.catchErrWhenRun
 import net.purefunc.kotlin.ext.catchErrWhenTrue
 import net.purefunc.kotlin.ext.flatCatchErrWhenNull
@@ -31,7 +32,7 @@ class UserRepository(
     suspend fun login(
         password: String,
         userDO: UserDO
-    ): Either<CustomErr, UserDO> =
+    ): Either<QuarkusAppErr, UserDO> =
         userDO
             .catchErrWhenTrue(KaqAppErr.IdPasswordNotMapping) {
                 password.md5() != it.memberInfoEntity.password
@@ -61,7 +62,7 @@ class UserRepository(
 
     suspend fun signup(
         memberLoginReqDTO: UserLoginReqDTO,
-    ): Either<CustomErr, UserDO> =
+    ): Either<QuarkusAppErr, UserDO> =
         unixTimeMilli
             .catchErrWhenRun(KaqAppErr.Runtime("map")) {
                 Panache.withTransaction {
@@ -101,7 +102,9 @@ class UserRepository(
                 )
             }
 
-    suspend fun queryByEmail(email: String): Either<CustomErr, UserDO> =
+    suspend fun queryByEmail(
+        email: String
+    ): Either<QuarkusAppErr, UserDO> =
         memberDao
             .catchErrWhenRun(KaqAppErr.Runtime("")) {
                 it.findByEmail(email)

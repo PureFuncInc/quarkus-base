@@ -1,7 +1,8 @@
 package net.purefunc.user.interfaces.facade
 
 import arrow.core.Either
-import net.purefunc.kotlin.ext.CustomErr
+import net.purefunc.common.QuarkusAppErr
+import net.purefunc.kotlin.ext.AppErr
 import net.purefunc.kotlin.ext.randomAlphanumeric
 import net.purefunc.kotlin.ext.urlDecode
 import net.purefunc.user.application.UserApplicationService
@@ -15,14 +16,18 @@ class UserFacade(
     private val userApplicationService: UserApplicationService
 ) {
 
-    suspend fun loginOrSignup(memberLoginReqDTO: UserLoginReqDTO): Either<CustomErr, String> =
+    suspend fun loginOrSignup(
+        memberLoginReqDTO: UserLoginReqDTO
+    ): Either<QuarkusAppErr, String> =
         userApplicationService
             .loginOrSignup(memberLoginReqDTO)
             .map {
                 randomAlphanumeric(32)
             }
 
-    suspend fun queryLoginRecords(@RestQuery email: String): Either<CustomErr, UserQueryRecordRespDTO> =
+    suspend fun queryLoginRecords(
+        @RestQuery email: String
+    ): Either<QuarkusAppErr, UserQueryRecordRespDTO> =
         userApplicationService
             .queryLoginRecordsByEmail(email.urlDecode())
             .map {

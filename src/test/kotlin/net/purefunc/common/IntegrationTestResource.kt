@@ -1,7 +1,10 @@
 package net.purefunc.common
 
 import io.quarkus.test.common.QuarkusTestResourceLifecycleManager
+import net.purefunc.kotlin.ext.md5
 import net.purefunc.kotlin.ext.toJson
+import net.purefunc.kotlin.ext.unixTimeMilli
+import net.purefunc.user.infrastructure.ThirdPartyResp
 import okhttp3.mockwebserver.Dispatcher
 import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.MockWebServer
@@ -24,9 +27,9 @@ class IntegrationTestResource : QuarkusTestResourceLifecycleManager {
 
         override fun dispatch(request: RecordedRequest) =
             when {
-                request.path?.contains("/api/v1.0/hello") ?: false ->
+                request.path?.contains("/api") ?: false ->
                     MockResponse().addHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-                        .setBody(mapOf("Hello" to "World").toJson())
+                        .setBody(ThirdPartyResp("1", unixTimeMilli).toJson())
                 else -> MockResponse().setResponseCode(404)
             }
     }
