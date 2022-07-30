@@ -19,33 +19,29 @@ import javax.ws.rs.core.HttpHeaders
 class UserControllerTest {
 
     @Test
-    fun postUsersAuth() {
-        val token = given()
-            .`when`()
-            .contentType(ContentType.JSON)
-            .body(UserLoginReqDTO("vincent@purefunc.net", "123456").toJson())
-            .post("/api/v1.0/users/auth")
-            .then()
-            .log()
-            .ifValidationFails()
-            .statusCode(200)
-            .extract()
-            .header(HttpHeaders.AUTHORIZATION)
+    fun testUsers() {
+        val token =
+            given()
+                .contentType(ContentType.JSON)
+                .body(UserLoginReqDTO("vincent@purefunc.net", "123456").toJson())
+                .`when`()
+                .post("/api/v1.0/users/auth")
+                .then()
+                .log().ifValidationFails()
+                .statusCode(200)
+                .extract().header(HttpHeaders.AUTHORIZATION)
         Assertions.assertTrue(token.isNotEmpty())
 
-        val resp = given()
-            .`when`()
-            .contentType(ContentType.JSON)
-            .param("email", "vincent@purefunc.net".urlEncode())
-            .get("/api/v1.0/users/records")
-            .then()
-            .log()
-            .ifValidationFails()
-            .statusCode(200)
-            .extract()
-            .body()
-            .asString()
-            .toClass(UserQueryRecordRespDTO::class.java)
+        val resp =
+            given()
+                .contentType(ContentType.JSON)
+                .param("email", "vincent@purefunc.net".urlEncode())
+                .`when`()
+                .get("/api/v1.0/users/records")
+                .then()
+                .log().ifValidationFails()
+                .statusCode(200)
+                .extract().body().asString().toClass(UserQueryRecordRespDTO::class.java)
         Assertions.assertEquals(1, resp.loginRecords.size)
     }
 }
