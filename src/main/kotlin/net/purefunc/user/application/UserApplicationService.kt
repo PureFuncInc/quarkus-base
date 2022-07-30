@@ -23,7 +23,7 @@ class UserApplicationService(
         userLoginReqDTO: UserLoginReqDTO
     ): Either<QuarkusAppErr, UserDO> =
         apply {
-            log.info(thirdPartyClient.getById("1").awaitSuspending().toString())
+//            log.info(thirdPartyClient.getById("1").awaitSuspending().toString())
         }.run {
             userDomainService.loginOrSignup(userLoginReqDTO)
         }
