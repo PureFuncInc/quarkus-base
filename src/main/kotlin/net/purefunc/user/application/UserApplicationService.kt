@@ -1,11 +1,7 @@
 package net.purefunc.user.application
 
 import arrow.core.Either
-import io.smallrye.mutiny.coroutines.awaitSuspending
-import net.purefunc.common.KaqAppErr
 import net.purefunc.common.QuarkusAppErr
-import net.purefunc.kotlin.ext.AppErr
-import net.purefunc.kotlin.ext.Slf4j.Companion.log
 import net.purefunc.user.domain.UserDO
 import net.purefunc.user.domain.service.UserDomainService
 import net.purefunc.user.infrastructure.ThirdPartyClient
@@ -22,11 +18,11 @@ class UserApplicationService(
     suspend fun loginOrSignup(
         userLoginReqDTO: UserLoginReqDTO
     ): Either<QuarkusAppErr, UserDO> =
-        apply {
+//        apply {
 //            log.info(thirdPartyClient.getById("1").awaitSuspending().toString())
-        }.run {
+//        }.run {
             userDomainService.loginOrSignup(userLoginReqDTO)
-        }
+//        }
 
     suspend fun queryLoginRecordsByEmail(
         email: String

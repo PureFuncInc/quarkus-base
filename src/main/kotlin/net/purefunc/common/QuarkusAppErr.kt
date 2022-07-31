@@ -3,16 +3,13 @@ package net.purefunc.common
 import arrow.core.Either
 import net.purefunc.kotlin.emoji.Emoji3
 import net.purefunc.kotlin.ext.AppErr
+import net.purefunc.kotlin.ext.Slf4j.Companion.log
 import net.purefunc.kotlin.ext.randomUUID
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
 import javax.ws.rs.core.HttpHeaders
 import javax.ws.rs.core.Response
 
 const val ERROR_CODE = "ERROR_CODE"
 const val ERROR_LOG_UUID = "ERROR_LOG_UUID"
-
-val log: Logger = LoggerFactory.getLogger(object {}.javaClass)
 
 open class QuarkusAppErr(code: String, message: String): AppErr(code, message)
 
