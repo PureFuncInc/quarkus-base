@@ -1,7 +1,10 @@
 package net.purefunc.common
 
 import org.eclipse.microprofile.openapi.annotations.OpenAPIDefinition
+import org.eclipse.microprofile.openapi.annotations.enums.SecuritySchemeIn
+import org.eclipse.microprofile.openapi.annotations.enums.SecuritySchemeType
 import org.eclipse.microprofile.openapi.annotations.info.Info
+import org.eclipse.microprofile.openapi.annotations.security.SecurityScheme
 import org.eclipse.microprofile.openapi.annotations.servers.Server
 import org.eclipse.microprofile.openapi.annotations.servers.ServerVariable
 import javax.ws.rs.core.Application
@@ -41,10 +44,11 @@ import javax.ws.rs.core.Application
         ),
     ],
 )
-//@SecurityScheme(
-//    type = SecuritySchemeType.HTTP,
-//    description = "Basic Authorization",
-//    scheme = "Basic",
-//)
+@SecurityScheme(
+    securitySchemeName = "auth",
+    type = SecuritySchemeType.APIKEY,
+    `in` = SecuritySchemeIn.COOKIE,
+    apiKeyName = "JSESSIONID",
+)
 class QuarkusApp : Application() {
 }

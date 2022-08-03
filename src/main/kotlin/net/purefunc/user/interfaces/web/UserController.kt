@@ -4,6 +4,7 @@ import net.purefunc.common.response200
 import net.purefunc.common.responseToken
 import net.purefunc.user.interfaces.facade.UserFacade
 import net.purefunc.user.interfaces.facade.req.UserLoginReqDTO
+import org.eclipse.microprofile.openapi.annotations.security.SecurityRequirement
 import org.jboss.resteasy.reactive.RestQuery
 import javax.annotation.security.PermitAll
 import javax.annotation.security.RolesAllowed
@@ -15,6 +16,7 @@ import javax.ws.rs.core.Response
 import javax.ws.rs.core.SecurityContext
 
 @Path("/api/v1.0/users")
+@SecurityRequirement(name = "auth")
 class UserController(
     private val userFacade: UserFacade,
 ) {
