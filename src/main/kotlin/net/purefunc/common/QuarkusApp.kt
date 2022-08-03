@@ -1,16 +1,14 @@
 package net.purefunc.common
 
 import org.eclipse.microprofile.openapi.annotations.OpenAPIDefinition
-import org.eclipse.microprofile.openapi.annotations.enums.SecuritySchemeType
 import org.eclipse.microprofile.openapi.annotations.info.Info
-import org.eclipse.microprofile.openapi.annotations.security.SecurityScheme
 import org.eclipse.microprofile.openapi.annotations.servers.Server
 import org.eclipse.microprofile.openapi.annotations.servers.ServerVariable
 import javax.ws.rs.core.Application
 
 @OpenAPIDefinition(
     info = Info(
-        title = "Pheme Voice API",
+        title = "Quarkus API",
         description =
         """
         Quarkus Base Demo
@@ -45,10 +43,8 @@ import javax.ws.rs.core.Application
 )
 //@SecurityScheme(
 //    type = SecuritySchemeType.HTTP,
-//    name = "BearerAuth",
-//    description = "JWT Authorization",
-//    scheme = "Bearer",
-//    bearerFormat = "JWT",
+//    description = "Basic Authorization",
+//    scheme = "Basic",
 //)
 class QuarkusApp : Application() {
 }

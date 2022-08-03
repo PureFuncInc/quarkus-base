@@ -1,6 +1,7 @@
 package net.purefunc.user.infrastructure.dao
 
 import io.quarkus.hibernate.reactive.panache.PanacheRepository
+import io.smallrye.mutiny.Uni
 import io.smallrye.mutiny.coroutines.awaitSuspending
 import net.purefunc.user.infrastructure.po.MemberPO
 import javax.enterprise.context.ApplicationScoped
@@ -12,4 +13,8 @@ class MemberDao : PanacheRepository<MemberPO> {
         find("email = ?1", email)
             .firstResult<MemberPO>()
             .awaitSuspending()
+
+    fun findByEmailUni(email: String): Uni<MemberPO?> =
+        find("email = ?1", email)
+            .firstResult()
 }

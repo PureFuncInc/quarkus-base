@@ -7,37 +7,33 @@ import io.quarkus.security.identity.SecurityIdentity
 import io.quarkus.security.identity.request.TrustedAuthenticationRequest
 import io.quarkus.security.runtime.QuarkusSecurityIdentity
 import io.smallrye.mutiny.Uni
-import kotlinx.coroutines.runBlocking
 import net.purefunc.user.infrastructure.dao.MemberDao
 import javax.enterprise.context.ApplicationScoped
+import javax.enterprise.context.control.ActivateRequestContext
 
 @ApplicationScoped
 class TrustedIdentityProvider(
     private val memberDao: MemberDao,
 ) : IdentityProvider<TrustedAuthenticationRequest> {
-
     override fun getRequestType(): Class<TrustedAuthenticationRequest> =
         TrustedAuthenticationRequest::class.java
 
+    @ActivateRequestContext
     override fun authenticate(
         request: TrustedAuthenticationRequest?,
         context: AuthenticationRequestContext?
     ): Uni<SecurityIdentity> {
-        request?.principal?.let { memberDao.findByEmail(it) }
-        val username = request?.username
-        val password = request?.password?.password
-        if (username == null || password == null) {
-            throw AuthenticationFailedException()
-        }
+        val username = request?.principal ?: throw AuthenticationFailedException()
 
-        return runBlocking {
-            val member = memberDao.findByEmail(username)
-            val identity = QuarkusSecurityIdentity
-                .builder()
-                .setPrincipal { member!!.email }
-                .addRole("USER")
-                .build() as SecurityIdentity
-            Uni.createFrom().item(identity)
-        }
+        return memberDao.findByEmailUni(username)
+            .map {
+                it?.run {
+                    QuarkusSecurityIdentity
+                        .builder()
+                        .setPrincipal { email }
+                        .addRole("USER")
+                        .build() as SecurityIdentity
+                } ?: throw AuthenticationFailedException()
+            }
     }
 }

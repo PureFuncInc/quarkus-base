@@ -10,7 +10,9 @@ import javax.annotation.security.RolesAllowed
 import javax.ws.rs.GET
 import javax.ws.rs.POST
 import javax.ws.rs.Path
+import javax.ws.rs.core.Context
 import javax.ws.rs.core.Response
+import javax.ws.rs.core.SecurityContext
 
 @Path("/api/v1.0/users")
 class UserController(
@@ -27,12 +29,12 @@ class UserController(
     @GET
     @RolesAllowed(value = ["USER"])
     suspend fun queryLoginRecords(
-//        @Context securityContext: SecurityContext,
+        @Context securityContext: SecurityContext,
         @RestQuery email: String
     ): Response =
-//        apply {
-//            println(securityContext.userPrincipal)
-//        }.run {
-        userFacade.queryLoginRecords(email).response200()
-//        }
+        apply {
+            println(securityContext.userPrincipal.name)
+        }.run {
+            userFacade.queryLoginRecords(email).response200()
+        }
 }

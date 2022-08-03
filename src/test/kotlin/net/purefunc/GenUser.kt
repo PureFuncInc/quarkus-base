@@ -1,8 +1,10 @@
 package net.purefunc
 
-//fun main() {
-//
-//    val bcryptHash: String = BcryptUtil.bcryptHash("string")
-//    println(bcryptHash)
-//
-//}
+import io.quarkus.elytron.security.common.BcryptUtil
+
+fun main() {
+
+    val bcryptHash: String = BcryptUtil.bcryptHash("string")
+    println(bcryptHash)
+
+}

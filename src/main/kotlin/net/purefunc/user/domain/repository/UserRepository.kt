@@ -1,12 +1,12 @@
 package net.purefunc.user.domain.repository
 
 import arrow.core.Either
+import io.quarkus.elytron.security.common.BcryptUtil
 import io.quarkus.hibernate.reactive.panache.Panache
 import io.smallrye.mutiny.Uni
 import io.smallrye.mutiny.coroutines.awaitSuspending
 import net.purefunc.common.KaqAppErr
 import net.purefunc.common.QuarkusAppErr
-import net.purefunc.kotlin.ext.AppErr
 import net.purefunc.kotlin.ext.catchErrWhenRun
 import net.purefunc.kotlin.ext.catchErrWhenTrue
 import net.purefunc.kotlin.ext.flatCatchErrWhenNull
@@ -35,7 +35,7 @@ class UserRepository(
     ): Either<QuarkusAppErr, UserDO> =
         userDO
             .catchErrWhenTrue(KaqAppErr.IdPasswordNotMapping) {
-                password.md5() != it.memberInfoEntity.password
+                !BcryptUtil.matches(password, it.memberInfoEntity.password)
             }.flatCatchErrWhenRun(KaqAppErr.Runtime("map")) {
                 val loginRecord = Panache.withTransaction {
                     memberLoginRecordDao.persist(

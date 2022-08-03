@@ -1,5 +1,6 @@
 package net.purefunc.common
 
+import io.quarkus.elytron.security.common.BcryptUtil
 import io.quarkus.security.AuthenticationFailedException
 import io.quarkus.security.identity.AuthenticationRequestContext
 import io.quarkus.security.identity.IdentityProvider
@@ -7,9 +8,9 @@ import io.quarkus.security.identity.SecurityIdentity
 import io.quarkus.security.identity.request.UsernamePasswordAuthenticationRequest
 import io.quarkus.security.runtime.QuarkusSecurityIdentity
 import io.smallrye.mutiny.Uni
-import kotlinx.coroutines.runBlocking
 import net.purefunc.user.infrastructure.dao.MemberDao
 import javax.enterprise.context.ApplicationScoped
+import javax.enterprise.context.control.ActivateRequestContext
 
 @ApplicationScoped
 class UsernamePasswordIdentityProvider(
@@ -19,24 +20,27 @@ class UsernamePasswordIdentityProvider(
     override fun getRequestType(): Class<UsernamePasswordAuthenticationRequest> =
         UsernamePasswordAuthenticationRequest::class.java
 
+    @ActivateRequestContext
     override fun authenticate(
         request: UsernamePasswordAuthenticationRequest?,
         context: AuthenticationRequestContext?
-    ): Uni<SecurityIdentity> {
-        val username = request?.username
-        val password = request?.password?.password
-        if (username == null || password == null) {
-            throw AuthenticationFailedException()
+    ): Uni<SecurityIdentity> =
+        run {
+            val username = request?.username ?: throw AuthenticationFailedException()
+            val password = request.password?.password ?: throw AuthenticationFailedException()
+            Pair(username, String(password))
+        }.run {
+            memberDao.findByEmailUni(first)
+                .map {
+                    it?.takeIf {
+                        BcryptUtil.matches(second, it.password)
+                    }?.run {
+                        QuarkusSecurityIdentity
+                            .builder()
+                            .setPrincipal { it.email }
+                            .addRole("USER")
+                            .build() as SecurityIdentity
+                    } ?: throw AuthenticationFailedException()
+                }
         }
-
-        return runBlocking {
-            val member = memberDao.findByEmail(username)
-            val identity = QuarkusSecurityIdentity
-                .builder()
-                .setPrincipal { member!!.email }
-                .addRole("USER")
-                .build() as SecurityIdentity
-            Uni.createFrom().item(identity)
-        }
-    }
 }
