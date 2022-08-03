@@ -20,19 +20,19 @@ sealed class KaqAppErr {
     class Runtime(memo: String) : QuarkusAppErr("E500001", "$memo, runtime err")
 }
 
-fun <T> Either<AppErr, T>.responseToken(): Response =
+fun <T> Either<QuarkusAppErr, T>.responseToken(): Response =
     fold(
         ifLeft = { listOf(it).handle() },
         ifRight = { Response.ok(it).header(HttpHeaders.AUTHORIZATION, "Bearer $it").build() },
     )
 
-fun <T> Either<AppErr, T>.response200(): Response =
+fun <T> Either<QuarkusAppErr, T>.response200(): Response =
     fold(
         ifLeft = { listOf(it).handle() },
         ifRight = { Response.ok(it).build() },
     )
 
-fun List<AppErr>.handle(): Response =
+fun List<QuarkusAppErr>.handle(): Response =
     randomUUID
         .also {
             forEach { err ->

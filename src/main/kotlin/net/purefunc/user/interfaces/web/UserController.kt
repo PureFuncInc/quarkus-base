@@ -5,6 +5,8 @@ import net.purefunc.common.responseToken
 import net.purefunc.user.interfaces.facade.UserFacade
 import net.purefunc.user.interfaces.facade.req.UserLoginReqDTO
 import org.jboss.resteasy.reactive.RestQuery
+import javax.annotation.security.PermitAll
+import javax.annotation.security.RolesAllowed
 import javax.ws.rs.GET
 import javax.ws.rs.POST
 import javax.ws.rs.Path
@@ -17,11 +19,20 @@ class UserController(
 
     @Path("/auth")
     @POST
+    @PermitAll
     suspend fun loginOrSignup(memberLoginReqDTO: UserLoginReqDTO): Response =
         userFacade.loginOrSignup(memberLoginReqDTO).responseToken()
 
     @Path("/records")
     @GET
-    suspend fun queryLoginRecords(@RestQuery email: String): Response =
+    @RolesAllowed(value = ["USER"])
+    suspend fun queryLoginRecords(
+//        @Context securityContext: SecurityContext,
+        @RestQuery email: String
+    ): Response =
+//        apply {
+//            println(securityContext.userPrincipal)
+//        }.run {
         userFacade.queryLoginRecords(email).response200()
+//        }
 }

@@ -1,9 +1,7 @@
 package net.purefunc.user.domain.service
 
 import arrow.core.Either
-import net.purefunc.common.KaqAppErr
 import net.purefunc.common.QuarkusAppErr
-import net.purefunc.kotlin.ext.AppErr
 import net.purefunc.user.domain.UserDO
 import net.purefunc.user.domain.repository.UserRepository
 import net.purefunc.user.interfaces.facade.req.UserLoginReqDTO
